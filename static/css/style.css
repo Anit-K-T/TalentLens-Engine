@@ -1,0 +1,50 @@
+body{
+    background:#F1F5F9;
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar{
+    height:70px;
+}
+
+.card{
+    border-radius:18px;
+    transition:0.3s;
+}
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,0.12);
+
+}
+
+.nav-link{
+
+    font-size:17px;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    transition:0.3s;
+
+}
+
+.active-menu{
+    background:#2563EB;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.nav-link:hover{
+    background:#334155;
+    border-radius:10px;
+}
+
+h2{
+
+    font-weight:600;
+
+}
