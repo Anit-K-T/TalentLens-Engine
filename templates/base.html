@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TalentLens{% endblock %}</title>
-    <!-- Google Font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{% block title %}TalentLens{% endblock %}</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,12 +23,14 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
 
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
     <div class="container-fluid">
 
-        <a class="navbar-brand fw-bold" href="#">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
             TalentLens Engine
         </a>
 
@@ -44,11 +48,10 @@
         <!-- Sidebar -->
         <div class="col-md-2 col-lg-2 bg-dark text-white vh-100 p-3">
 
-
             <ul class="nav flex-column">
 
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white active-menu" href="#">
+                    <a class="nav-link text-white active-menu" href="{% url 'home' %}">
                         🏠 Dashboard
                     </a>
                 </li>
@@ -60,7 +63,7 @@
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="#">
+                    <a class="nav-link text-white" href="{% url 'job_list' %}">
                         💼 Job Roles
                     </a>
                 </li>
@@ -84,112 +87,21 @@
         <!-- Main Content -->
         <div class="col-md-10 col-lg-10 p-4">
 
-          
-
-
-
-
-<h2 class="mb-4">Recruiter Dashboard</h2>
-
-<div class="row">
-
-   <div class="col-md-3 mb-4">
-    <div class="card shadow border-0 h-100">
-        <div class="card-body d-flex justify-content-between align-items-center">
-
-            <div>
-                <h6 class="text-muted">Total Candidates</h6>
-                <h2 class="fw-bold">24</h2>
-            </div>
-
-            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                 style="width:65px;height:65px;font-size:28px;">
-                <i class="fa-solid fa-users"></i>
-            </div>
-
-        </div>
-    </div>
-</div>
-<div class="col-md-3 mb-4">
-    <div class="card shadow border-0 h-100">
-        <div class="card-body d-flex justify-content-between align-items-center">
-
-            <div>
-                <h6 class="text-muted">Job Roles</h6>
-                <h2 class="fw-bold">8</h2>
-            </div>
-
-            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
-                 style="width:65px;height:65px;font-size:28px;">
-                <i class="fa-solid fa-briefcase"></i>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-   <div class="col-md-3 mb-4">
-    <div class="card shadow border-0 h-100">
-        <div class="card-body d-flex justify-content-between align-items-center">
-
-            <div>
-                <h6 class="text-muted">Approved</h6>
-                <h2 class="fw-bold">15</h2>
-            </div>
-
-            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
-                 style="width:65px;height:65px;font-size:28px;">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-   <div class="col-md-3 mb-4">
-    <div class="card shadow border-0 h-100">
-        <div class="card-body d-flex justify-content-between align-items-center">
-
-            <div>
-                <h6 class="text-muted">Pending</h6>
-                <h2 class="fw-bold">9</h2>
-            </div>
-
-            <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center"
-                 style="width:65px;height:65px;font-size:28px;">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-</div>
-
-<br>
-
-<div class="card shadow border-0">
-    <div class="card-body">
-        <h4>Welcome to TalentLens Engine 🚀</h4>
-        <p>
-            This dashboard allows recruiters to manage candidates,
-            create job roles, evaluate interview transcripts,
-            and generate AI-powered hiring recommendations.
-        </p>
-    </div>
-</div>
-
+            {% block content %}
+            {% endblock %}
 
         </div>
 
     </div>
 </div>
+
+<!-- Footer -->
 <footer class="text-center mt-5 mb-3 text-muted">
     TalentLens Engine © 2026 | AI Recruitment Platform
 </footer>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>

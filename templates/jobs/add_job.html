@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Job Role{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-primary text-white">
+            <h3><i class="fas fa-briefcase"></i> Add Job Role</h3>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save Job Role
+                </button>
+
+                <a href="{% url 'job_list' %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
