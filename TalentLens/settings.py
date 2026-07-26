@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'candidates',
     'jobs',
-    'interviews',
     'dashboard',
     'ai_engine',
     "interview_management",

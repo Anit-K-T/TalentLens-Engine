@@ -25,6 +25,10 @@ urlpatterns = [
     path("", include("dashboard.urls")),
     path("jobs/", include("jobs.urls")),
     path("candidates/", include("candidates.urls")),
+    path(
+    "interviews/",
+    include("interview_management.urls"),
+),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
