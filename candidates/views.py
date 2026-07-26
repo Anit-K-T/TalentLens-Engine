@@ -5,15 +5,42 @@ from ai_engine.skill_extractor import extract_skills
 from ai_engine.resume_parser import extract_text_from_pdf
 from ai_engine.matcher import calculate_match
 from ai_engine.recommender import recommend
+from jobs.models import JobRole
 
 
 
 def candidate_list(request):
+
     candidates = Candidate.objects.all().order_by("-id")
+
+    search = request.GET.get("search")
+    status = request.GET.get("status")
+    job = request.GET.get("job")
+    min_score = request.GET.get("min_score")
+
+    if search:
+        candidates = candidates.filter(name__icontains=search)
+
+    if status:
+        candidates = candidates.filter(status=status)
+
+    if job:
+        candidates = candidates.filter(applied_job_id=job)
+
+    if min_score:
+        candidates = candidates.filter(match_score__gte=min_score)
+
+    jobs = JobRole.objects.all()
+
+    context = {
+        "candidates": candidates,
+        "jobs": jobs,
+    }
+
     return render(
         request,
         "candidates/candidate_list.html",
-        {"candidates": candidates},
+        context,
     )
 
 

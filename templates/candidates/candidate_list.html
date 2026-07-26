@@ -20,6 +20,136 @@
 
     </div>
 
+    <!-- Search & Filter -->
+
+    <div class="card shadow border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                <div class="row g-3">
+
+                    <!-- Search -->
+
+                    <div class="col-md-3">
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="Search Candidate"
+                            value="{{ request.GET.search }}"
+                        >
+
+                    </div>
+
+                    <!-- Job -->
+
+                    <div class="col-md-3">
+
+                        <select name="job" class="form-select">
+
+                            <option value="">All Jobs</option>
+
+                            {% for job in jobs %}
+
+                            <option value="{{ job.id }}"
+                            {% if request.GET.job == job.id|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                            >
+                                {{ job.title }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Status -->
+
+                    <div class="col-md-2">
+
+                        <select name="status" class="form-select">
+
+                            <option value="">All Status</option>
+
+                            <option value="Pending"
+                            {% if request.GET.status == "Pending" %}
+                                selected
+                            {% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="Shortlisted"
+                            {% if request.GET.status == "Shortlisted" %}
+                                selected
+                            {% endif %}>
+                                Shortlisted
+                            </option>
+
+                            <option value="Rejected"
+                            {% if request.GET.status == "Rejected" %}
+                                selected
+                            {% endif %}>
+                                Rejected
+                            </option>
+
+                            <option value="Hired"
+                            {% if request.GET.status == "Hired" %}
+                                selected
+                            {% endif %}>
+                                Hired
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Match Score -->
+
+                    <div class="col-md-2">
+
+                        <input
+                            type="number"
+                            name="min_score"
+                            class="form-control"
+                            placeholder="Min Score"
+                            min="0"
+                            max="100"
+                            value="{{ request.GET.min_score }}"
+                        >
+
+                    </div>
+
+                    <!-- Buttons -->
+
+                    <div class="col-md-2 d-grid">
+
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+
+                        <a href="{% url 'candidate_list' %}"
+                           class="btn btn-outline-secondary mt-2">
+                            Reset
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Candidate Table -->
+
     <div class="card shadow border-0">
 
         <div class="card-body">
@@ -29,11 +159,14 @@
                 <thead class="table-dark">
 
                     <tr>
+
                         <th>Name</th>
                         <th>Email</th>
                         <th>Applied Job</th>
                         <th>Status</th>
-                        <th width="250">Actions</th>
+                        <th>Match Score</th>
+                        <th width="260">Actions</th>
+
                     </tr>
 
                 </thead>
@@ -45,9 +178,20 @@
                     <tr>
 
                         <td>{{ candidate.name }}</td>
+
                         <td>{{ candidate.email }}</td>
+
                         <td>{{ candidate.applied_job.title }}</td>
+
                         <td>{{ candidate.status }}</td>
+
+                        <td>
+
+                            <span class="badge bg-success">
+                                {{ candidate.match_score }}%
+                            </span>
+
+                        </td>
 
                         <td>
 
@@ -75,8 +219,10 @@
 
                     <tr>
 
-                        <td colspan="5" class="text-center text-muted">
-                            No Candidates Added Yet
+                        <td colspan="6" class="text-center text-muted">
+
+                            No Candidates Found
+
                         </td>
 
                     </tr>
