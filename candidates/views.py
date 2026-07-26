@@ -6,7 +6,9 @@ from ai_engine.resume_parser import extract_text_from_pdf
 from ai_engine.matcher import calculate_match
 from ai_engine.recommender import recommend
 from jobs.models import JobRole
-
+from django.http import HttpResponse
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 
 def candidate_list(request):
@@ -155,6 +157,35 @@ def candidate_detail(request, candidate_id):
             "missing": missing,
         },
     )
+def download_ai_report(request, candidate_id):
+
+    candidate = get_object_or_404(Candidate, id=candidate_id)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f'attachment; filename="{candidate.name}_AI_Report.pdf"'
+    )
+
+    doc = SimpleDocTemplate(response)
+
+    styles = getSampleStyleSheet()
+    story = []
+
+    story.append(Paragraph("<b>TalentLens Engine</b>", styles["Title"]))
+    story.append(Paragraph("AI Candidate Evaluation Report", styles["Heading2"]))
+    story.append(Paragraph("<br/>", styles["BodyText"]))
+
+    story.append(Paragraph(f"<b>Name:</b> {candidate.name}", styles["BodyText"]))
+    story.append(Paragraph(f"<b>Email:</b> {candidate.email}", styles["BodyText"]))
+    story.append(Paragraph(f"<b>Applied Job:</b> {candidate.applied_job.title}", styles["BodyText"]))
+    story.append(Paragraph(f"<b>Status:</b> {candidate.status}", styles["BodyText"]))
+    story.append(Paragraph(f"<b>AI Match Score:</b> {candidate.match_score}%", styles["BodyText"]))
+    story.append(Paragraph(f"<b>Recommendation:</b> {candidate.ai_recommendation}", styles["BodyText"]))
+    story.append(Paragraph(f"<b>Matched Skills:</b> {candidate.matched_skills}", styles["BodyText"]))
+
+    doc.build(story)
+
+    return response
 def delete_candidate(request, candidate_id):
     candidate = get_object_or_404(Candidate, id=candidate_id)
     candidate.delete()
