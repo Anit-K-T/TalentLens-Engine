@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h3><i class="fas fa-robot"></i> Candidate AI Analysis</h3>
+        </div>
+
+        <div class="card-body">
+
+            <h3>{{ candidate.name }}</h3>
+
+            <hr>
+
+            <p><strong>Email:</strong> {{ candidate.email }}</p>
+            <p><strong>Applied Job:</strong> {{ candidate.applied_job }}</p>
+            <p><strong>Experience:</strong> {{ candidate.experience }} Years</p>
+            <p><strong>Status:</strong> {{ candidate.status }}</p>
+
+            <hr>
+
+            <h5>
+                <i class="fas fa-chart-line text-primary"></i>
+                AI Match Score
+            </h5>
+
+            <div class="progress mb-4" style="height:30px;">
+
+                <div class="progress-bar bg-success"
+                     style="width: {{ candidate.match_score }}%;">
+
+                    {{ candidate.match_score }}%
+
+                </div>
+
+            </div>
+
+            <h5>
+                <i class="fas fa-star text-warning"></i>
+                AI Recommendation
+            </h5>
+
+            <div class="alert alert-success">
+                {{ candidate.ai_recommendation }}
+            </div>
+
+            <h5>
+                <i class="fas fa-lightbulb text-warning"></i>
+                Extracted Skills
+            </h5>
+
+            <div class="mb-4">
+
+                {% for skill in skills %}
+
+                    <span class="badge bg-primary me-2 mb-2 p-2">
+                        {{ skill }}
+                    </span>
+
+                {% empty %}
+
+                    <span class="text-muted">
+                        No skills detected.
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+            <hr>
+
+            <h5>
+                <i class="fas fa-file-alt"></i>
+                Resume Preview
+            </h5>
+
+            <div class="border rounded p-3 bg-light">
+
+                <pre style="white-space: pre-wrap;">
+{{ candidate.parsed_resume|truncatechars:1000 }}
+                </pre>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
