@@ -39,14 +39,18 @@ def home(request):
     recent_candidates = Candidate.objects.order_by("-uploaded_at")[:5]
 
     context = {
-        "total_candidates": total_candidates,
-        "total_jobs": total_jobs,
-        "shortlisted": shortlisted,
-        "rejected": rejected,
-        "pending": pending,
-        "hired": hired,
-        "avg_score": avg_score,
-        "recent_candidates": recent_candidates,
-    }
+    "total_candidates": total_candidates,
+    "total_jobs": total_jobs,
+    "shortlisted": shortlisted,
+    "rejected": rejected,
+    "pending": pending,
+    "hired": hired,
+    "avg_score": avg_score,
+    "recent_candidates": recent_candidates,
+    "chart_pending": pending,
+    "chart_shortlisted": shortlisted,
+    "chart_rejected": rejected,
+    "chart_hired": hired,
+}
 
     return render(request, "dashboard.html", context)

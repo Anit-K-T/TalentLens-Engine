@@ -158,5 +158,53 @@ Monitor recruitment progress, AI evaluations, and hiring statistics from one pla
     </div>
 
 </div>
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Candidate Status Distribution</h5>
+    </div>
+
+    <div class="card-body">
+        <canvas id="statusChart" height="100"></canvas>
+    </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+
+<script>
+const ctx = document.getElementById('statusChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Pending', 'Shortlisted', 'Rejected', 'Hired'],
+        datasets: [{
+            label: 'Candidates',
+            data: [
+                {{ chart_pending }},
+                {{ chart_shortlisted }},
+                {{ chart_rejected }},
+                {{ chart_hired }}
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+</script>
 
 {% endblock %}
