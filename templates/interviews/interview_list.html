@@ -18,6 +18,7 @@
                 <th>Date</th>
                 <th>Time</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
 
@@ -31,18 +32,32 @@
                 <td>{{ interview.interview_date }}</td>
                 <td>{{ interview.interview_time }}</td>
                 <td>{{ interview.status }}</td>
+
+                <td>
+                    <a href="{% url 'interview_update' interview.id %}"
+                       class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'interview_delete' interview.id %}"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                </td>
+
             </tr>
 
         {% empty %}
 
             <tr>
-                <td colspan="5">No interviews scheduled.</td>
+                <td colspan="6" class="text-center">
+                    No interviews scheduled.
+                </td>
             </tr>
 
         {% endfor %}
 
         </tbody>
-
     </table>
 
 </div>

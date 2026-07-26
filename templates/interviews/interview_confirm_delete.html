@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <h3>Delete Interview</h3>
+
+            <p>
+                Are you sure you want to delete the interview for
+                <strong>{{ interview.candidate }}</strong>?
+            </p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <button class="btn btn-danger">
+                    Delete
+                </button>
+
+                <a href="{% url 'interview_list' %}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
