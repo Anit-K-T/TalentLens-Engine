@@ -53,23 +53,55 @@
                 Extracted Skills
             </h5>
 
-            <div class="mb-4">
+            <hr>
 
-                {% for skill in skills %}
+<h5>
+    <i class="fas fa-check-circle text-success"></i>
+    Matched Skills
+</h5>
 
-                    <span class="badge bg-primary me-2 mb-2 p-2">
-                        {{ skill }}
-                    </span>
+<div class="mb-4">
 
-                {% empty %}
+    {% for skill in matched %}
 
-                    <span class="text-muted">
-                        No skills detected.
-                    </span>
+        <span class="badge bg-success me-2 mb-2 p-2">
+            {{ skill|title }}
+        </span>
 
-                {% endfor %}
+    {% empty %}
 
-            </div>
+        <span class="text-muted">
+            No matched skills.
+        </span>
+
+    {% endfor %}
+
+</div>
+
+<hr>
+
+<h5>
+    <i class="fas fa-times-circle text-danger"></i>
+    Missing Skills
+</h5>
+
+<div class="mb-4">
+
+    {% for skill in missing %}
+
+        <span class="badge bg-danger me-2 mb-2 p-2">
+            {{ skill|title }}
+        </span>
+
+    {% empty %}
+
+        <span class="text-muted">
+            No missing skills 🎉
+        </span>
+
+    {% endfor %}
+
+</div>
 
             <hr>
 

@@ -7,25 +7,156 @@
 <h3>👋 Good Afternoon, Recruiter</h3>
 
 <p class="text-muted">
-Welcome back to <strong>TalentLens Engine</strong>.
-
-Manage candidates, evaluate resumes, compare applicants with job roles,
-and generate AI-assisted hiring recommendations from one place.
+Welcome back to <strong>TalentLens Engine</strong>.<br>
+Monitor recruitment progress, AI evaluations, and hiring statistics from one place.
 </p>
+
+<!-- Statistics Cards -->
+
+<div class="row mt-4">
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow border-0 bg-primary text-white">
+            <div class="card-body text-center">
+                <h5>Total Candidates</h5>
+                <h2>{{ total_candidates }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow border-0 bg-success text-white">
+            <div class="card-body text-center">
+                <h5>Job Roles</h5>
+                <h2>{{ total_jobs }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow border-0 bg-warning text-dark">
+            <div class="card-body text-center">
+                <h5>Pending</h5>
+                <h2>{{ pending }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow border-0 bg-info text-white">
+            <div class="card-body text-center">
+                <h5>Shortlisted</h5>
+                <h2>{{ shortlisted }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow border-0 bg-danger text-white">
+            <div class="card-body text-center">
+                <h5>Rejected</h5>
+                <h2>{{ rejected }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow border-0 bg-dark text-white">
+            <div class="card-body text-center">
+                <h5>Hired</h5>
+                <h2>{{ hired }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+
+                <h5>Average AI Match Score</h5>
+
+                <div class="progress mt-3" style="height:28px;">
+
+                    <div class="progress-bar bg-success"
+                         style="width: {{ avg_score }}%;">
+
+                        {{ avg_score }}%
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Recent Candidates -->
+
 <div class="card shadow border-0 mt-4">
+
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Recent Candidates</h5>
+    </div>
+
     <div class="card-body">
 
-        <h4>Recent Activity</h4>
+        <table class="table table-hover">
 
-        <hr>
+            <thead>
 
-        <p>🟢 ML Engineer job role created.</p>
+                <tr>
 
-        <p>🟡 Resume uploaded successfully.</p>
+                    <th>Name</th>
+                    <th>Job</th>
+                    <th>Status</th>
+                    <th>Match Score</th>
 
-        <p>🔵 Dashboard initialized.</p>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for candidate in recent_candidates %}
+
+                <tr>
+
+                    <td>{{ candidate.name }}</td>
+
+                    <td>{{ candidate.applied_job }}</td>
+
+                    <td>{{ candidate.status }}</td>
+
+                    <td>{{ candidate.match_score }}%</td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" class="text-center">
+
+                        No candidates yet.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
 
     </div>
+
 </div>
 
 {% endblock %}

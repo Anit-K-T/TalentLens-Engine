@@ -37,9 +37,10 @@ def add_candidate(request):
             candidate.parsed_resume = parsed_text
             candidate.matched_skills = ", ".join(skills)
 
-            score, matched = calculate_match(
+            score, matched, missing = calculate_match(
             candidate.matched_skills,
-            candidate.applied_job.required_skills)
+            candidate.applied_job.required_skills
+            )
 
             candidate.match_score = score
             candidate.ai_recommendation = recommend(score)
@@ -79,16 +80,15 @@ def edit_candidate(request, candidate_id):
                 candidate.parsed_resume = parsed_text
                 candidate.matched_skills = ", ".join(skills)
 
-# Calculate AI match score
-                score, matched = calculate_match(
+                score, matched, missing = calculate_match(
                 candidate.matched_skills,
-                candidate.applied_job.required_skills)
+                candidate.applied_job.required_skills
+                )
 
                 candidate.match_score = score
                 candidate.ai_recommendation = recommend(score)
 
                 candidate.save()
-
             return redirect("candidate_list")
 
     else:
@@ -103,6 +103,8 @@ def candidate_detail(request, candidate_id):
     candidate = get_object_or_404(Candidate, id=candidate_id)
 
     skills = []
+    matched = []
+    missing = []
 
     if candidate.matched_skills:
         skills = [
@@ -111,12 +113,19 @@ def candidate_detail(request, candidate_id):
             if skill.strip()
         ]
 
+        score, matched, missing = calculate_match(
+            candidate.matched_skills,
+            candidate.applied_job.required_skills
+        )
+
     return render(
         request,
         "candidates/candidate_detail.html",
         {
             "candidate": candidate,
             "skills": skills,
+            "matched": matched,
+            "missing": missing,
         },
     )
 def delete_candidate(request, candidate_id):
