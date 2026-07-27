@@ -54,28 +54,36 @@ def add_candidate(request):
         form = CandidateForm(request.POST, request.FILES)
 
         if form.is_valid():
-            print("DEBUG: Form is valid")
-            candidate = form.save()
-            print("DEBUG: Candidate saved")
 
-            # Get the uploaded resume path
+            candidate = form.save()
+
             resume_path = candidate.resume.path
 
-            # Extract text from the PDF
             parsed_text = extract_text_from_pdf(resume_path)
+
             skills = extract_skills(parsed_text)
-            print("Resume path:", resume_path)
-            print("Extracted characters:", len(parsed_text))
+
             candidate.parsed_resume = parsed_text
+
             candidate.matched_skills = ", ".join(skills)
+            
+            print("Candidate experience =", candidate.experience)
+            print("Required experience =", candidate.applied_job.minimum_experience)
+            print("Candidate education =", candidate.education)
+            print("Required education =", candidate.applied_job.education_required)
+            print("RESULT =", result)
 
-            score, matched, missing = calculate_match(
-            candidate.matched_skills,
-            candidate.applied_job.required_skills
+            result = calculate_match(
+                candidate_skills=candidate.matched_skills,
+                required_skills=candidate.applied_job.required_skills,
+                candidate_experience=candidate.experience,
+                required_experience=candidate.applied_job.minimum_experience,
+                candidate_education=candidate.education,
+                required_education=candidate.applied_job.education_required,
             )
+           
 
-            candidate.match_score = score
-            candidate.ai_recommendation = recommend(score)
+            
 
             candidate.save()
 
@@ -89,11 +97,15 @@ def add_candidate(request):
         "candidates/add_candidate.html",
         {"form": form},
     )
-
 def edit_candidate(request, candidate_id):
-    candidate = get_object_or_404(Candidate, id=candidate_id)
+
+    candidate = get_object_or_404(
+        Candidate,
+        id=candidate_id,
+    )
 
     if request.method == "POST":
+
         form = CandidateForm(
             request.POST,
             request.FILES,
@@ -101,35 +113,62 @@ def edit_candidate(request, candidate_id):
         )
 
         if form.is_valid():
+
             candidate = form.save()
 
-            # Only parse if a resume exists
             if candidate.resume:
+
                 resume_path = candidate.resume.path
-                parsed_text = extract_text_from_pdf(resume_path)
+
+                parsed_text = extract_text_from_pdf(
+                    resume_path
+                )
+
                 skills = extract_skills(parsed_text)
 
                 candidate.parsed_resume = parsed_text
+
                 candidate.matched_skills = ", ".join(skills)
 
-                score, matched, missing = calculate_match(
-                candidate.matched_skills,
-                candidate.applied_job.required_skills
+                result = calculate_match(
+                    candidate_skills=candidate.matched_skills,
+                    required_skills=candidate.applied_job.required_skills,
+                    candidate_experience=candidate.experience,
+                    required_experience=candidate.applied_job.minimum_experience,
+                    candidate_education=candidate.education,
+                    required_education=candidate.applied_job.education_required,
                 )
 
-                candidate.match_score = score
-                candidate.ai_recommendation = recommend(score)
+                candidate.skill_score = result["skill_score"]
+
+                candidate.experience_score = result["experience_score"]
+
+                candidate.semantic_score = result["semantic_score"]
+
+                candidate.education_score = result["education_score"]
+
+                candidate.match_score = result["final_score"]
+
+                candidate.ai_recommendation = recommend(
+                    candidate.match_score
+                )
 
                 candidate.save()
+
             return redirect("candidate_list")
 
     else:
-        form = CandidateForm(instance=candidate)
+
+        form = CandidateForm(
+            instance=candidate
+        )
 
     return render(
         request,
         "candidates/add_candidate.html",
-        {"form": form},
+        {
+            "form": form,
+        },
     )
 def candidate_detail(request, pk):
 
@@ -138,12 +177,23 @@ def candidate_detail(request, pk):
         pk=pk
     )
 
+    result = calculate_match(
+        candidate_skills=candidate.matched_skills,
+        required_skills=candidate.applied_job.required_skills,
+        candidate_experience=candidate.experience,
+        required_experience=candidate.applied_job.minimum_experience,
+        candidate_education=candidate.education,
+        required_education=candidate.applied_job.education_required,
+    )
+
     return render(
         request,
         "candidates/candidate_detail.html",
         {
-            "candidate": candidate
-        }
+            "candidate": candidate,
+            "matched": result["matched"],
+            "missing": result["missing"],
+        },
     )
 
 def download_ai_report(request, candidate_id):

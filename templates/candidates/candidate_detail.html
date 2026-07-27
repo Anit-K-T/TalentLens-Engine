@@ -139,5 +139,104 @@
     <i class="fas fa-calendar-plus"></i>
     Schedule Interview
 </a>
+<div class="card mt-4">
+    <div class="card-header bg-primary text-white">
+        <h4>🤖 AI Candidate Analysis</h4>
+    </div>
+
+    <div class="card-body">
+
+        <h5>Overall AI Match Score</h5>
+
+        <div class="progress mb-3" style="height:25px;">
+            <div class="progress-bar bg-success"
+                 role="progressbar"
+                 style="width: {{ candidate.match_score }}%;">
+                {{ candidate.match_score }}%
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+
+            <tr>
+                <th>Skill Score</th>
+                <td>{{ candidate.skill_score }}/40</td>
+            </tr>
+
+            <tr>
+                <th>Experience Score</th>
+                <td>{{ candidate.experience_score }}/30</td>
+            </tr>
+
+            <tr>
+                <th>Education Score</th>
+                <td>{{ candidate.education_score }}/10</td>
+            </tr>
+
+            <tr>
+                <th>Semantic Score</th>
+                <td>{{ candidate.semantic_score }}/20</td>
+            </tr>
+
+            <tr class="table-success">
+                <th>Final Score</th>
+                <th>{{ candidate.match_score }}%</th>
+            </tr>
+
+        </table>
+
+    </div>
+</div>
+<div class="row mt-4">
+
+    <div class="col-md-6">
+
+        <div class="card border-success">
+
+            <div class="card-header bg-success text-white">
+                Matched Skills
+            </div>
+
+            <div class="card-body">
+
+                {% for skill in matched %}
+                    <span class="badge bg-success m-1">
+                        {{ skill }}
+                    </span>
+                {% empty %}
+                    <p>No matched skills.</p>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="card border-danger">
+
+            <div class="card-header bg-danger text-white">
+                Missing Skills
+            </div>
+
+            <div class="card-body">
+
+                {% for skill in missing %}
+                    <span class="badge bg-danger m-1">
+                        {{ skill }}
+                    </span>
+                {% empty %}
+                    <p>No missing skills.</p>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

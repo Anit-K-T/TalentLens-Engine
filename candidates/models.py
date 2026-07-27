@@ -1,6 +1,7 @@
 from django.db import models
 from jobs.models import JobRole
 
+
 class Candidate(models.Model):
 
     STATUS_CHOICES = [
@@ -11,20 +12,55 @@ class Candidate(models.Model):
     ]
 
     name = models.CharField(max_length=100)
+
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, blank=True)
 
-    education = models.CharField(max_length=150)
-    experience = models.FloatField(help_text="Experience in years")
-    skills = models.TextField(help_text="Comma-separated skills")
+    phone = models.CharField(
+        max_length=15,
+        blank=True
+    )
 
-    resume = models.FileField(upload_to="resumes/")
+    education = models.CharField(
+        max_length=150
+    )
 
-    # ✅ AI fields
+    experience = models.FloatField(
+        help_text="Experience in years"
+    )
+
+    skills = models.TextField(
+        help_text="Comma-separated skills"
+    )
+
+    resume = models.FileField(
+        upload_to="resumes/"
+    )
+
+    # Resume Parsing
     parsed_resume = models.TextField(blank=True)
+
     matched_skills = models.TextField(blank=True)
+
+    # ------------------------
+    # AI Score Breakdown
+    # ------------------------
+
+    skill_score = models.FloatField(default=0)
+
+    experience_score = models.FloatField(default=0)
+
+    semantic_score = models.FloatField(default=0)
+
+    education_score = models.FloatField(default=0)
+
+    # Final Weighted Score
+
     match_score = models.FloatField(default=0)
-    ai_recommendation = models.CharField(max_length=100, blank=True)
+
+    ai_recommendation = models.CharField(
+        max_length=100,
+        blank=True
+    )
 
     applied_job = models.ForeignKey(
         JobRole,
@@ -38,7 +74,9 @@ class Candidate(models.Model):
         default="Pending"
     )
 
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
         return self.name
