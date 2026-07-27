@@ -96,6 +96,7 @@ Monitor recruitment progress, AI evaluations, and hiring statistics from one pla
 
 </div>
 
+
 <!-- Recent Candidates -->
 
 <div class="card shadow border-0 mt-4">
@@ -158,6 +159,128 @@ Monitor recruitment progress, AI evaluations, and hiring statistics from one pla
     </div>
 
 </div>
+<div class="row mt-4">
+
+    <div class="col-md-4">
+
+        <div class="card shadow border-0">
+
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Recent Job Roles</h5>
+            </div>
+
+            <div class="card-body">
+
+                <ul class="list-group list-group-flush">
+
+                    {% for job in recent_jobs %}
+
+                    <li class="list-group-item">
+
+                        {{ job.title }}
+
+                    </li>
+
+                    {% empty %}
+
+                    <li class="list-group-item">
+
+                        No jobs available.
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow border-0">
+
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">Upcoming Interviews</h5>
+            </div>
+
+            <div class="card-body">
+
+                <ul class="list-group list-group-flush">
+
+                    {% for interview in upcoming_interviews %}
+
+                    <li class="list-group-item">
+
+                        <strong>{{ interview.candidate.name }}</strong><br>
+
+                        {{ interview.interview_date }}
+                        {{ interview.interview_time }}
+
+                    </li>
+
+                    {% empty %}
+
+                    <li class="list-group-item">
+
+                        No upcoming interviews.
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow border-0">
+
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Top Candidates</h5>
+            </div>
+
+            <div class="card-body">
+
+                <ul class="list-group list-group-flush">
+
+                    {% for candidate in top_candidates %}
+
+                    <li class="list-group-item d-flex justify-content-between">
+
+                        <span>{{ candidate.name }}</span>
+
+                        <strong>{{ candidate.match_score }}%</strong>
+
+                    </li>
+
+                    {% empty %}
+
+                    <li class="list-group-item">
+
+                        No candidates available.
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 <div class="card shadow border-0 mt-4">
     <div class="card-header bg-primary text-white">
         <h5 class="mb-0">Candidate Status Distribution</h5>
@@ -166,6 +289,63 @@ Monitor recruitment progress, AI evaluations, and hiring statistics from one pla
     <div class="card-body">
         <canvas id="statusChart" height="100"></canvas>
     </div>
+</div>
+<div class="card shadow border-0 mt-4">
+
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Job-wise Applications</h5>
+    </div>
+
+    <div class="card-body">
+        <canvas id="jobChart" height="100"></canvas>
+    </div>
+
+</div>
+<div class="col-md-6">
+    <div class="card shadow border-0">
+        <div class="card-header bg-info text-white">
+            <h6 class="mb-0">AI Match Score Distribution</h6>
+        </div>
+
+        <div class="card-body py-2">
+            <canvas id="scoreChart" height="45"></canvas>
+        </div>
+    </div>
+</div>
+<div class="card shadow border-0 mt-3">
+
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Hiring Funnel</h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row text-center">
+
+            <div class="col-md-3">
+                <h3>{{ applied_count }}</h3>
+                <p>Applied</p>
+            </div>
+
+            <div class="col-md-3">
+                <h3>{{ shortlisted_count }}</h3>
+                <p>Shortlisted</p>
+            </div>
+
+            <div class="col-md-3">
+                <h3>{{ interview_count }}</h3>
+                <p>Interview Scheduled</p>
+            </div>
+
+            <div class="col-md-3">
+                <h3>{{ hired_count }}</h3>
+                <p>Hired</p>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}
@@ -207,4 +387,73 @@ new Chart(ctx, {
 });
 </script>
 
+
+<script>
+
+const jobCtx = document.getElementById('jobChart');
+
+new Chart(jobCtx, {
+    type: 'bar',
+    data: {
+        labels: [
+            {% for job in job_application_stats %}
+                "{{ job.title }}",
+            {% endfor %}
+        ],
+        datasets: [{
+            label: "Applications",
+            data: [
+                {% for job in job_application_stats %}
+                    {{ job.total_applications }},
+                {% endfor %}
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+
+</script>
+<script>
+
+const scoreCtx = document.getElementById('scoreChart');
+
+new Chart(scoreCtx, {
+    type: 'doughnut',
+    data: {
+        labels: [
+            '0-40%',
+            '41-60%',
+            '61-80%',
+            '81-100%'
+        ],
+        datasets: [{
+            data: [
+                {{ score_0_40 }},
+                {{ score_41_60 }},
+                {{ score_61_80 }},
+                {{ score_81_100 }}
+            ]
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+
+</script>
 {% endblock %}

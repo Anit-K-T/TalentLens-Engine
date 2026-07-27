@@ -131,35 +131,21 @@ def edit_candidate(request, candidate_id):
         "candidates/add_candidate.html",
         {"form": form},
     )
-def candidate_detail(request, candidate_id):
-    candidate = get_object_or_404(Candidate, id=candidate_id)
+def candidate_detail(request, pk):
 
-    skills = []
-    matched = []
-    missing = []
-
-    if candidate.matched_skills:
-        skills = [
-            skill.strip()
-            for skill in candidate.matched_skills.split(",")
-            if skill.strip()
-        ]
-
-        score, matched, missing = calculate_match(
-            candidate.matched_skills,
-            candidate.applied_job.required_skills
-        )
+    candidate = get_object_or_404(
+        Candidate,
+        pk=pk
+    )
 
     return render(
         request,
         "candidates/candidate_detail.html",
         {
-            "candidate": candidate,
-            "skills": skills,
-            "matched": matched,
-            "missing": missing,
-        },
+            "candidate": candidate
+        }
     )
+
 def download_ai_report(request, candidate_id):
 
     candidate = get_object_or_404(Candidate, id=candidate_id)
