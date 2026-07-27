@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Interview
 from .forms import InterviewForm
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 
 
 def interview_list(request):
@@ -17,34 +20,59 @@ def interview_list(request):
 
 def interview_create(request):
 
-    if request.method == "POST":
-
-        form = InterviewForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect("interview_list")
-
-    else:
-        form = InterviewForm()
-
-    return render(
-        request,
-        "interviews/interview_form.html",
-        {"form": form},
-    )
-def interview_create(request):
-
     candidate_id = request.GET.get("candidate")
 
     if request.method == "POST":
+
         form = InterviewForm(request.POST)
 
         if form.is_valid():
-            form.save()
+
+            interview = form.save()
+
+            candidate = interview.candidate
+
+            print("Sending email to:", candidate.email)
+
+            send_mail(
+                subject="Interview Invitation - TalentLens Engine",
+
+                message=f"""
+Dear {candidate.name},
+
+Congratulations!
+
+Your interview has been scheduled.
+
+Job Role: {interview.job.title}
+Date: {interview.interview_date}
+Time: {interview.interview_time}
+
+Interviewer: {interview.interviewer_name}
+Mode: {interview.mode}
+
+Meeting Link:
+{interview.meeting_link}
+
+Best wishes!
+
+TalentLens Recruitment Team
+""",
+
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[candidate.email],
+                fail_silently=False,
+            )
+
+            messages.success(
+                request,
+                "Interview scheduled and email invitation sent successfully!"
+            )
+
             return redirect("interview_list")
 
     else:
+
         if candidate_id:
             form = InterviewForm(
                 initial={"candidate": candidate_id}
