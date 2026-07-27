@@ -9,6 +9,9 @@ from jobs.models import JobRole
 from django.http import HttpResponse
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
+import csv
+from django.http import HttpResponse
+from openpyxl import Workbook
 
 
 def candidate_list(request):
@@ -191,3 +194,70 @@ def delete_candidate(request, candidate_id):
     candidate.delete()
 
     return redirect("candidate_list")
+
+
+def export_candidates_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="candidates.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow([
+        "Name",
+        "Email",
+        "Phone",
+        "Job Applied",
+        "Match Score",
+        "Status",
+    ])
+
+    candidates = Candidate.objects.all()
+
+    for candidate in candidates:
+        writer.writerow([
+            candidate.name,
+            candidate.email,
+            candidate.phone,
+            candidate.applied_job.title if candidate.applied_job else "",
+            candidate.match_score,
+            candidate.status,
+        ])
+
+    return response
+def export_candidates_excel(request):
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Candidates"
+
+    worksheet.append([
+        "Name",
+        "Email",
+        "Phone",
+        "Job Applied",
+        "Match Score",
+        "Status",
+    ])
+
+    candidates = Candidate.objects.all()
+
+    for candidate in candidates:
+        worksheet.append([
+            candidate.name,
+            candidate.email,
+            candidate.phone,
+            candidate.applied_job.title if candidate.applied_job else "",
+            candidate.match_score,
+            candidate.status,
+        ])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="candidates.xlsx"'
+    )
+
+    workbook.save(response)
+
+    return response

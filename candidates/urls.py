@@ -10,6 +10,17 @@ urlpatterns = [
     path(
     "report/<int:candidate_id>/",
     views.download_ai_report,
-    name="download_ai_report",
-),
+    name="download_ai_report"),
+    path(
+    "export/csv/",
+    views.export_candidates_csv,
+    name="export_candidates_csv"
+    ),
+
+    path(
+    "export/excel/",
+    views.export_candidates_excel,
+    name="export_candidates_excel"
+    ),
+
 ]
