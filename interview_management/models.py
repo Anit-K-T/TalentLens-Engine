@@ -2,7 +2,6 @@ from django.db import models
 from candidates.models import Candidate
 from jobs.models import JobRole
 
-
 class Interview(models.Model):
 
     MODE_CHOICES = [

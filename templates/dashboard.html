@@ -361,10 +361,10 @@ new Chart(ctx, {
         datasets: [{
             label: 'Candidates',
             data: [
-                {{ chart_pending }},
-                {{ chart_shortlisted }},
-                {{ chart_rejected }},
-                {{ chart_hired }}
+                {{ pending }},
+                {{ shortlisted }},
+                {{ rejected }},
+                {{ hired }}
             ]
         }]
     },
@@ -404,7 +404,7 @@ new Chart(jobCtx, {
             label: "Applications",
             data: [
                 {% for job in job_application_stats %}
-                    {{ job.total_applications }},
+                    {{ job.total_candidates }},
                 {% endfor %}
             ]
         }]

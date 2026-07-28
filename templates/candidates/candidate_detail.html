@@ -238,5 +238,40 @@
     </div>
 
 </div>
+<a
+    href="{% url 'evaluate_candidate' candidate.pk %}"
+    class="btn btn-warning"
+>
+    Evaluate Candidate
+</a>
+<div class="card mt-4">
+    <div class="card-header">
+        <h5>Recruiter Evaluation</h5>
+    </div>
+
+    <div class="card-body">
+
+        <p>
+            <strong>Status:</strong>
+            {{ candidate.status }}
+        </p>
+
+        <p>
+            <strong>Recruiter Notes:</strong>
+        </p>
+
+        <div class="border rounded p-3 bg-light">
+            {{ candidate.recruiter_notes|default:"No notes added yet." }}
+        </div>
+
+        <br>
+
+        <a href="{% url 'evaluate_candidate' candidate.pk %}"
+           class="btn btn-warning">
+            Edit Evaluation
+        </a>
+
+    </div>
+</div>
 
 {% endblock %}

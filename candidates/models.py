@@ -35,6 +35,10 @@ class Candidate(models.Model):
     resume = models.FileField(
         upload_to="resumes/"
     )
+    recruiter_notes = models.TextField(
+        blank=True,
+        null=True
+        )
 
     # Resume Parsing
     parsed_resume = models.TextField(blank=True)
@@ -73,6 +77,7 @@ class Candidate(models.Model):
         choices=STATUS_CHOICES,
         default="Pending"
     )
+    
 
     uploaded_at = models.DateTimeField(
         auto_now_add=True

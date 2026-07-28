@@ -8,6 +8,11 @@ urlpatterns = [
     path("<int:pk>/", views.candidate_detail, name="candidate_detail"),
     path("delete/<int:candidate_id>/", views.delete_candidate, name="delete_candidate"),
     path(
+    "candidate/<int:pk>/evaluate/",
+    views.evaluate_candidate,
+    name="evaluate_candidate",
+    ),
+    path(
     "report/<int:candidate_id>/",
     views.download_ai_report,
     name="download_ai_report"),
@@ -22,5 +27,6 @@ urlpatterns = [
     views.export_candidates_excel,
     name="export_candidates_excel"
     ),
+    path("dashboard/", views.dashboard, name="dashboard"),
 
 ]

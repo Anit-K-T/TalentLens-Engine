@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h3>Recruiter Evaluation</h3>
+        </div>
+
+        <div class="card-body">
+
+            <h5>{{ candidate.name }}</h5>
+            <p>{{ candidate.email }}</p>
+
+            <hr>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    {{ form.status }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Recruiter Notes
+                    </label>
+
+                    {{ form.recruiter_notes }}
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                >
+                    Save Evaluation
+                </button>
+
+                <a
+                    href="{% url 'candidate_detail' candidate.pk %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

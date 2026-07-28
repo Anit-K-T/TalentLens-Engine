@@ -59,3 +59,22 @@ class CandidateForm(forms.ModelForm):
                 "class": "form-select"
             }),
         }
+class RecruiterEvaluationForm(forms.ModelForm):
+    class Meta:
+        model = Candidate
+        fields = [
+            "status",
+            "recruiter_notes",
+        ]
+
+        widgets = {
+            "status": forms.Select(attrs={
+                "class": "form-select"
+            }),
+
+            "recruiter_notes": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Enter recruiter evaluation notes..."
+            }),
+        }
