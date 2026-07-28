@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
 from .ai.transcriber import generate_transcript
+from .ai.evaluator import evaluate_interview
 
 
 def interview_list(request):
@@ -121,36 +122,58 @@ def interview_delete(request, pk):
         {"interview": interview},
     )
 def analyze_interview(request, pk):
-    print("===== ANALYZE START =====")
 
     interview = get_object_or_404(Interview, pk=pk)
 
-    print("Interview ID:", interview.id)
-    print("Recording:", interview.interview_recording)
-
     if not interview.interview_recording:
-        print("No recording found")
         messages.error(request, "Please upload an interview recording first.")
         return redirect("interview_list")
 
-    print("Recording path:", interview.interview_recording.path)
+    try:
+        # Generate transcript only once
+        if not interview.transcript:
+            interview.transcript = generate_transcript(
+                interview.interview_recording.path
+            )
 
-    if not interview.transcript:
-        print("Generating transcript...")
+        # Generate AI evaluation if not already done
+        if not interview.ai_feedback:
 
-        try:
-            transcript = generate_transcript(interview.interview_recording.path)
-            interview.transcript = transcript
-            interview.save()
-            print("Transcript saved")
+            result = evaluate_interview(interview.transcript)
+            print("Gemini Result:", result)
 
-        except Exception as e:
-            print("ERROR:", e)
-            raise
+            interview.communication_score = result["communication_score"]
+            interview.technical_score = result["technical_score"]
+            interview.confidence_score = result["confidence_score"]
+            interview.overall_score = result["overall_score"]
+            interview.hiring_recommendation = result["hiring_recommendation"]
+            interview.ai_feedback = result["ai_feedback"]
+            print("Communication:", interview.communication_score)
+            print("Technical:", interview.technical_score)
+            print("Confidence:", interview.confidence_score)
+            print("Overall:", interview.overall_score)
+            print("Recommendation:", interview.hiring_recommendation)
+            print("Feedback:", interview.ai_feedback)
 
-    print("Rendering page")
+        interview.save()
+        print("Interview saved successfully.")
+
+        messages.success(
+            request,
+            "AI interview analysis completed successfully!"
+        )
+
+    except Exception as e:
+        print("ERROR:", e)
+        messages.error(
+            request,
+            f"AI analysis failed: {e}"
+        )
+
     return render(
         request,
         "interviews/interview_analysis.html",
-        {"interview": interview},
+        {
+            "interview": interview,
+        },
     )
