@@ -122,7 +122,6 @@ def interview_delete(request, pk):
         {"interview": interview},
     )
 def analyze_interview(request, pk):
-
     interview = get_object_or_404(Interview, pk=pk)
 
     if not interview.interview_recording:
@@ -130,33 +129,37 @@ def analyze_interview(request, pk):
         return redirect("interview_list")
 
     try:
-        # Generate transcript only once
+        # Generate transcript if missing
         if not interview.transcript:
             interview.transcript = generate_transcript(
                 interview.interview_recording.path
             )
 
-        # Generate AI evaluation if not already done
-        if not interview.ai_feedback:
+        # Generate AI evaluation if any AI field is missing
+        if (
+            not interview.ai_feedback
+            or not interview.summary
+            or not interview.strengths
+            or not interview.weaknesses
+        ):
 
             result = evaluate_interview(interview.transcript)
-            print("Gemini Result:", result)
 
-            interview.communication_score = result["communication_score"]
-            interview.technical_score = result["technical_score"]
-            interview.confidence_score = result["confidence_score"]
-            interview.overall_score = result["overall_score"]
-            interview.hiring_recommendation = result["hiring_recommendation"]
-            interview.ai_feedback = result["ai_feedback"]
-            print("Communication:", interview.communication_score)
-            print("Technical:", interview.technical_score)
-            print("Confidence:", interview.confidence_score)
-            print("Overall:", interview.overall_score)
-            print("Recommendation:", interview.hiring_recommendation)
-            print("Feedback:", interview.ai_feedback)
+            interview.communication_score = result.get("communication_score", 0)
+            interview.technical_score = result.get("technical_score", 0)
+            interview.confidence_score = result.get("confidence_score", 0)
+            interview.overall_score = result.get("overall_score", 0)
 
-        interview.save()
-        print("Interview saved successfully.")
+            interview.hiring_recommendation = result.get(
+                "hiring_recommendation", ""
+            )
+
+            interview.ai_feedback = result.get("ai_feedback", "")
+            interview.summary = result.get("summary", "")
+            interview.strengths = result.get("strengths", [])
+            interview.weaknesses = result.get("weaknesses", [])
+
+            interview.save()
 
         messages.success(
             request,
@@ -165,10 +168,7 @@ def analyze_interview(request, pk):
 
     except Exception as e:
         print("ERROR:", e)
-        messages.error(
-            request,
-            f"AI analysis failed: {e}"
-        )
+        messages.error(request, f"AI analysis failed: {e}")
 
     return render(
         request,

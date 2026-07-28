@@ -141,5 +141,44 @@
     </div>
 
 </div>
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📋 Recruiter Summary</h5>
+    </div>
+
+    <div class="card-body">
+        <p>{{ interview.summary }}</p>
+    </div>
+</div>
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">✅ Candidate Strengths</h5>
+    </div>
+
+    <div class="card-body">
+        <ul>
+            {% for item in interview.strengths %}
+                <li>{{ item }}</li>
+            {% empty %}
+                <li>No strengths available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0">⚠️ Areas for Improvement</h5>
+    </div>
+
+    <div class="card-body">
+        <ul>
+            {% for item in interview.weaknesses %}
+                <li>{{ item }}</li>
+            {% empty %}
+                <li>No weaknesses available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 
 {% endblock %}

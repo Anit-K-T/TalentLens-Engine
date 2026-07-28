@@ -6,13 +6,6 @@ from django.conf import settings
 genai.configure(api_key=settings.GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-flash-latest")
 
-print("\n========== AVAILABLE GEMINI MODELS ==========\n")
-
-for m in genai.list_models():
-    if "generateContent" in m.supported_generation_methods:
-        print(m.name)
-
-print("\n=============================================\n")
 
 
 def evaluate_interview(transcript):
@@ -32,7 +25,18 @@ Return ONLY valid JSON in exactly this format:
     "technical_score": 0,
     "confidence_score": 0,
     "overall_score": 0,
-    "hiring_recommendation": "Strong Hire",
+    "hiring_recommendation": "",
+    "strengths": [
+        "",
+        "",
+        ""
+    ],
+    "weaknesses": [
+        "",
+        "",
+        ""
+    ],
+    "summary": "",
     "ai_feedback": ""
 }}
 
@@ -68,6 +72,9 @@ Transcript:
     print(text)
 
     result = json.loads(text)
+    print("=" * 50)
+    print(result)
+    print("=" * 50)
 
     print("RESULT DICTIONARY:")
     print(result)

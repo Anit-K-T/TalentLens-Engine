@@ -112,6 +112,20 @@ class Interview(models.Model):
         blank=True,
         null=True
     )
+    # -----------------------------
+# AI Analysis
+# -----------------------------
+    summary = models.TextField(
+    blank=True,
+    null=True)
+
+    strengths = models.JSONField(
+    default=list,
+    blank=True)
+
+    weaknesses = models.JSONField(
+    default=list,
+    blank=True)
 
     # -----------------------------
     # Metadata
