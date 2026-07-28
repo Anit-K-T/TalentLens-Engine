@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-
 from .models import Interview
 from .forms import InterviewForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse
 
 
 def interview_list(request):
@@ -24,7 +24,7 @@ def interview_create(request):
 
     if request.method == "POST":
 
-        form = InterviewForm(request.POST)
+        form = InterviewForm(request.POST,request.FILES)
 
         if form.is_valid():
 
@@ -90,7 +90,7 @@ def interview_update(request, pk):
     interview = get_object_or_404(Interview, pk=pk)
 
     if request.method == "POST":
-        form = InterviewForm(request.POST, instance=interview)
+        form = InterviewForm(request.POST,request.FILES, instance=interview)
 
         if form.is_valid():
             form.save()
@@ -118,4 +118,18 @@ def interview_delete(request, pk):
         request,
         "interviews/interview_confirm_delete.html",
         {"interview": interview},
+    )
+def analyze_interview(request, pk):
+
+    interview = get_object_or_404(
+        Interview,
+        pk=pk
+    )
+
+    return render(
+        request,
+        "interviews/interview_analysis.html",
+        {
+            "interview": interview,
+        },
     )
