@@ -10,5 +10,5 @@ urlpatterns = [
     "analyze/<int:pk>/",
     views.analyze_interview,
     name="analyze_interview",
-),
+    ),
 ]

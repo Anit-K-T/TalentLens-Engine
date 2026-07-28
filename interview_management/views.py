@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
+from .ai.transcriber import generate_transcript
 
 
 def interview_list(request):
@@ -120,16 +121,36 @@ def interview_delete(request, pk):
         {"interview": interview},
     )
 def analyze_interview(request, pk):
+    print("===== ANALYZE START =====")
 
-    interview = get_object_or_404(
-        Interview,
-        pk=pk
-    )
+    interview = get_object_or_404(Interview, pk=pk)
 
+    print("Interview ID:", interview.id)
+    print("Recording:", interview.interview_recording)
+
+    if not interview.interview_recording:
+        print("No recording found")
+        messages.error(request, "Please upload an interview recording first.")
+        return redirect("interview_list")
+
+    print("Recording path:", interview.interview_recording.path)
+
+    if not interview.transcript:
+        print("Generating transcript...")
+
+        try:
+            transcript = generate_transcript(interview.interview_recording.path)
+            interview.transcript = transcript
+            interview.save()
+            print("Transcript saved")
+
+        except Exception as e:
+            print("ERROR:", e)
+            raise
+
+    print("Rendering page")
     return render(
         request,
         "interviews/interview_analysis.html",
-        {
-            "interview": interview,
-        },
+        {"interview": interview},
     )
