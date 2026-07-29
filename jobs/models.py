@@ -4,7 +4,7 @@ class JobRole(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     required_skills = models.TextField(help_text="Comma-separated skills")
-    minimum_experience = models.FloatField()
+    minimum_experience = models.PositiveIntegerField(default=0)
     education_required = models.CharField(max_length=100)
     summary = models.TextField(blank=True)
 
