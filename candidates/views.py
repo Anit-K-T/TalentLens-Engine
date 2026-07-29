@@ -14,7 +14,8 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from django.db.models import Avg, Count
 from interview_management.models import Interview
-
+from threading import Thread
+from .tasks import process_resume
 
 def evaluate_candidate(request, pk):
     candidate = get_object_or_404(Candidate, pk=pk)
@@ -86,47 +87,10 @@ def add_candidate(request):
 
             candidate = form.save()
 
-            # Resume Path
-            resume_path = candidate.resume.path
-
-            # Extract Resume Text
-            parsed_text = extract_text_from_pdf(resume_path)
-
-            # Extract Skills
-            skills = extract_skills(parsed_text)
-
-            candidate.parsed_resume = parsed_text
-            candidate.matched_skills = ", ".join(skills)
-
-            # AI Matching
-            result = calculate_match(
-                candidate_skills=candidate.matched_skills,
-                required_skills=candidate.applied_job.required_skills,
-                candidate_experience=candidate.experience,
-                required_experience=candidate.applied_job.minimum_experience,
-                candidate_education=candidate.education,
-                required_education=candidate.applied_job.education_required,
-            )
-
-            # Debug Prints (Optional)
-            print("Candidate Experience:", candidate.experience)
-            print("Required Experience:", candidate.applied_job.minimum_experience)
-            print("Candidate Education:", candidate.education)
-            print("Required Education:", candidate.applied_job.education_required)
-            print("AI Result:", result)
-
-            # Save AI Scores
-            candidate.skill_score = result["skill_score"]
-            candidate.experience_score = result["experience_score"]
-            candidate.education_score = result["education_score"]
-            candidate.semantic_score = result["semantic_score"]
-            candidate.match_score = result["final_score"]
-
-            # Recommendation
-            candidate.ai_recommendation = recommend(candidate.match_score)
-
-            candidate.save()
-
+            Thread(
+        target=process_resume,
+        args=(candidate.id,),
+        daemon=True).start()
             return redirect("candidate_list")
 
     else:
