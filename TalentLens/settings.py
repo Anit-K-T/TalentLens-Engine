@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'dashboard',
     'ai_engine',
     "interview_management",
+    "reports",
 ]
 
 MIDDLEWARE = [

@@ -242,28 +242,179 @@ def download_ai_report(request, candidate_id):
 
     candidate = get_object_or_404(Candidate, id=candidate_id)
 
+    # Get the latest interview for this candidate
+    interview = (
+        Interview.objects.filter(candidate=candidate)
+        .order_by("-created_at")
+        .first()
+    )
+
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = (
         f'attachment; filename="{candidate.name}_AI_Report.pdf"'
     )
 
     doc = SimpleDocTemplate(response)
-
     styles = getSampleStyleSheet()
     story = []
 
-    story.append(Paragraph("<b>TalentLens Engine</b>", styles["Title"]))
-    story.append(Paragraph("AI Candidate Evaluation Report", styles["Heading2"]))
-    story.append(Paragraph("<br/>", styles["BodyText"]))
+    # ---------------------------------------------------
+    # Title
+    # ---------------------------------------------------
+    story.append(
+        Paragraph("<b>TalentLens Engine</b>", styles["Title"])
+    )
 
-    story.append(Paragraph(f"<b>Name:</b> {candidate.name}", styles["BodyText"]))
-    story.append(Paragraph(f"<b>Email:</b> {candidate.email}", styles["BodyText"]))
-    story.append(Paragraph(f"<b>Applied Job:</b> {candidate.applied_job.title}", styles["BodyText"]))
-    story.append(Paragraph(f"<b>Status:</b> {candidate.status}", styles["BodyText"]))
-    story.append(Paragraph(f"<b>AI Match Score:</b> {candidate.match_score}%", styles["BodyText"]))
-    story.append(Paragraph(f"<b>Recommendation:</b> {candidate.ai_recommendation}", styles["BodyText"]))
-    story.append(Paragraph(f"<b>Matched Skills:</b> {candidate.matched_skills}", styles["BodyText"]))
+    story.append(
+        Paragraph("AI Interview Evaluation Report", styles["Heading2"])
+    )
 
+    story.append(
+        Paragraph("<br/>", styles["BodyText"])
+    )
+
+    # ---------------------------------------------------
+    # Candidate Details
+    # ---------------------------------------------------
+    story.append(
+        Paragraph(f"<b>Name:</b> {candidate.name}", styles["BodyText"])
+    )
+
+    story.append(
+        Paragraph(f"<b>Email:</b> {candidate.email}", styles["BodyText"])
+    )
+
+    story.append(
+        Paragraph(
+            f"<b>Applied Job:</b> {candidate.applied_job.title}",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph("<br/>", styles["BodyText"])
+    )
+
+    # ---------------------------------------------------
+    # Interview Details
+    # ---------------------------------------------------
+    if interview:
+
+        story.append(
+            Paragraph("<b>Interview Scores</b>", styles["Heading2"])
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Communication Score:</b> {interview.communication_score}%",
+                styles["BodyText"],
+            )
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Technical Score:</b> {interview.technical_score}%",
+                styles["BodyText"],
+            )
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Confidence Score:</b> {interview.confidence_score}%",
+                styles["BodyText"],
+            )
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Overall Score:</b> {interview.overall_score}%",
+                styles["BodyText"],
+            )
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Hiring Recommendation:</b> {interview.hiring_recommendation}",
+                styles["BodyText"],
+            )
+        )
+
+        story.append(
+            Paragraph("<br/>", styles["BodyText"])
+        )
+
+        # Recruiter Summary
+        story.append(
+            Paragraph("<b>Recruiter Summary</b>", styles["Heading2"])
+        )
+
+        story.append(
+            Paragraph(interview.summary or "-", styles["BodyText"])
+        )
+
+        story.append(
+            Paragraph("<br/>", styles["BodyText"])
+        )
+
+        # Strengths
+        story.append(
+            Paragraph("<b>Strengths</b>", styles["Heading2"])
+        )
+
+        if interview.strengths:
+            for strength in interview.strengths:
+                story.append(
+                    Paragraph(f"• {strength}", styles["BodyText"])
+                )
+        else:
+            story.append(
+                Paragraph("-", styles["BodyText"])
+            )
+
+        story.append(
+            Paragraph("<br/>", styles["BodyText"])
+        )
+
+        # Weaknesses
+        story.append(
+            Paragraph("<b>Areas for Improvement</b>", styles["Heading2"])
+        )
+
+        if interview.weaknesses:
+            for weakness in interview.weaknesses:
+                story.append(
+                    Paragraph(f"• {weakness}", styles["BodyText"])
+                )
+        else:
+            story.append(
+                Paragraph("-", styles["BodyText"])
+            )
+
+        story.append(
+            Paragraph("<br/>", styles["BodyText"])
+        )
+
+        # AI Feedback
+        story.append(
+            Paragraph("<b>AI Feedback</b>", styles["Heading2"])
+        )
+
+        story.append(
+            Paragraph(interview.ai_feedback or "-", styles["BodyText"])
+        )
+
+    else:
+
+        story.append(
+            Paragraph(
+                "<b>No AI interview analysis available for this candidate.</b>",
+                styles["BodyText"],
+            )
+        )
+
+    # ---------------------------------------------------
+    # Generate PDF
+    # ---------------------------------------------------
     doc.build(story)
 
     return response
@@ -354,15 +505,18 @@ def dashboard(request):
     # -----------------------------
     # Dashboard Cards
     # -----------------------------
+    # -----------------------------
+# Dashboard Cards
+# -----------------------------
     total_candidates = candidates.count()
     total_jobs = JobRole.objects.count()
     total_interviews = Interview.objects.count()
 
     average_score = (
-        candidates.aggregate(Avg("match_score"))["match_score__avg"] or 0
-    )
+    candidates.aggregate(Avg("match_score"))["match_score__avg"] or 0)
 
     avg_score = round(average_score, 2)
+
 
     # -----------------------------
     # Candidate Status Counts

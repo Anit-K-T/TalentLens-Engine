@@ -58,62 +58,67 @@
             <hr>
 
             <!-- AI Scores -->
-            <h5>AI Evaluation Scores</h5>
+            <div class="card shadow-sm mt-4">
 
-            <div class="row text-center">
+    <div class="card-header bg-dark text-white">
+        <h4 class="mb-0">📊 AI Evaluation Scores</h4>
+    </div>
 
-                <div class="col-md-3">
-                    <div class="card border-primary mb-3">
-                        <div class="card-body">
-                            <h6>Communication</h6>
-                            <h3>{{ interview.communication_score }}</h3>
-                        </div>
-                    </div>
-                </div>
+    <div class="card-body">
 
-                <div class="col-md-3">
-                    <div class="card border-success mb-3">
-                        <div class="card-body">
-                            <h6>Technical</h6>
-                            <h3>{{ interview.technical_score }}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card border-warning mb-3">
-                        <div class="card-body">
-                            <h6>Confidence</h6>
-                            <h3>{{ interview.confidence_score }}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card border-danger mb-3">
-                        <div class="card-body">
-                            <h6>Overall</h6>
-                            <h3>{{ interview.overall_score }}</h3>
-                        </div>
-                    </div>
-                </div>
-
+        <label><strong>Communication</strong></label>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-primary"
+                 style="width: {{ interview.communication_score }}%">
+                {{ interview.communication_score }}%
             </div>
+        </div>
+
+        <label><strong>Technical</strong></label>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-success"
+                 style="width: {{ interview.technical_score }}%">
+                {{ interview.technical_score }}%
+            </div>
+        </div>
+
+        <label><strong>Confidence</strong></label>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-warning text-dark"
+                 style="width: {{ interview.confidence_score }}%">
+                {{ interview.confidence_score }}%
+            </div>
+        </div>
+
+        <label><strong>Overall</strong></label>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-info"
+                 style="width: {{ interview.overall_score }}%">
+                {{ interview.overall_score }}%
+            </div>
+        </div>
+
+    </div>
+
+</div>
 
             <hr>
 
             <!-- Hiring Recommendation -->
-            <h5>Hiring Recommendation</h5>
+           <h5>🏆 Hiring Recommendation</h5>
 
-            {% if interview.hiring_recommendation %}
-                <div class="alert alert-success">
-                    <strong>{{ interview.hiring_recommendation }}</strong>
-                </div>
-            {% else %}
-                <div class="alert alert-secondary">
-                    AI recommendation not generated yet.
-                </div>
-            {% endif %}
+{% if interview.hiring_recommendation == "Strong Hire" %}
+    <span class="badge bg-success fs-6">Strong Hire</span>
+
+{% elif interview.hiring_recommendation == "Hire" %}
+    <span class="badge bg-primary fs-6">Hire</span>
+
+{% elif interview.hiring_recommendation == "Hold" %}
+    <span class="badge bg-warning text-dark fs-6">Hold</span>
+
+{% else %}
+    <span class="badge bg-danger fs-6">Reject</span>
+{% endif %}
 
             <!-- AI Feedback -->
             <h5>AI Feedback</h5>

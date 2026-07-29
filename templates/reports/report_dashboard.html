@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>📊 Reports Dashboard</h2>
+    <hr>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+
+        <tr>
+            <th>Name</th>
+            <th>Job</th>
+            <th>Resume Score</th>
+            <th>Interview Score</th>
+            <th>Recommendation</th>
+            <th>AI Report</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for candidate in candidates %}
+
+        <tr>
+
+            <td>{{ candidate.name }}</td>
+
+            <td>{{ candidate.applied_job.title }}</td>
+
+            <td>{{ candidate.match_score }}%</td>
+
+            <td>
+                {% for interview in interviews %}
+                    {% if interview.candidate.id == candidate.id %}
+                        {{ interview.overall_score }}%
+                    {% endif %}
+                {% endfor %}
+            </td>
+
+            <td>
+
+                {% for interview in interviews %}
+                    {% if interview.candidate.id == candidate.id %}
+                        {{ interview.hiring_recommendation }}
+                    {% endif %}
+                {% endfor %}
+
+            </td>
+
+            <td>
+
+                <a href="{% url 'download_ai_report' candidate.id %}"
+                   class="btn btn-danger btn-sm">
+
+                    PDF
+
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
