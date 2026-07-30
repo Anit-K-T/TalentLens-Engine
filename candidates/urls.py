@@ -27,6 +27,4 @@ urlpatterns = [
     views.export_candidates_excel,
     name="export_candidates_excel"
     ),
-    path("dashboard/", views.dashboard, name="dashboard"),
-
 ]
